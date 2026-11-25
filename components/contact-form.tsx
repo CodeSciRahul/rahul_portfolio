@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 import { useTranslations } from 'next-intl';
-import { useSearchParams } from 'next/navigation';
 import { Link } from '@/i18n/routing';
 import {
   Send,
@@ -49,12 +48,8 @@ const TIMELINE_OPTIONS = [
   { value: 'Ongoing Retainer / Dedicated Support', key: 'timelineOption5' },
 ] as const;
 
-function ContactFormInner({ initialService }: ContactFormProps) {
+export function ContactForm({ initialService }: ContactFormProps) {
   const t = useTranslations('contact');
-  const searchParams = useSearchParams();
-
-  // Determine initial service from prop or URL query parameter (?service=...)
-  const queryServiceParam = searchParams?.get('service') || '';
 
   const resolveServiceTitle = (param?: string): string => {
     if (!param) return '';
@@ -68,7 +63,7 @@ function ContactFormInner({ initialService }: ContactFormProps) {
     return matched ? matched.title : param;
   };
 
-  const defaultService = resolveServiceTitle(initialService || queryServiceParam);
+  const defaultService = resolveServiceTitle(initialService);
 
   const [formData, setFormData] = React.useState({
     name: '',
@@ -625,21 +620,5 @@ function ContactFormInner({ initialService }: ContactFormProps) {
         <span>Strict confidentiality. Your data is never shared or sold.</span>
       </div>
     </form>
-  );
-}
-
-export function ContactForm(props: ContactFormProps) {
-  return (
-    <React.Suspense
-      fallback={
-        <div className="space-y-4 animate-pulse">
-          <div className="h-10 bg-neutral-100 dark:bg-neutral-800 rounded-xl" />
-          <div className="h-10 bg-neutral-100 dark:bg-neutral-800 rounded-xl" />
-          <div className="h-28 bg-neutral-100 dark:bg-neutral-800 rounded-xl" />
-        </div>
-      }
-    >
-      <ContactFormInner {...props} />
-    </React.Suspense>
   );
 }
